@@ -1,95 +1,100 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+// Components
+import Card from "./components/Card"
+import LogoCarousel from "./components/LogoCarousel"
+import PostCard from "./components/PostCard"
+import Carousel from "./components/MainCarousel"
+import Link from "next/link"
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+// Lib
+import { client } from "@/app/lib/client"
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+const industrias = [
+    {
+        name: "Automotriz",
+        icon: "/img/icon-automotriz.svg"
+    },
+    {
+        name: "Comunicaciones",
+        icon: "/img/icon-comunicaciones.svg"
+    },
+    {
+        name: "Consumidor y minorista",
+        icon: "/img/icon-consumidor.svg"
+    },
+    {
+        name: "Fabricación e industria",
+        icon: "/img/icon-fabricacion.svg"
+    },
+    {
+        name: "Servicios financieros",
+        icon: "/img/icon-servicios.svg"
+    },
+    {
+        name: "Medios",
+        icon: "/img/icon-medios.svg"
+    },
+    {
+        name: "Tecnología",
+        icon: "/img/icon-tecnologia.svg"
+    },
+    {
+        name: "Tecnología Médica",
+        icon: "/img/icon-tecnologiamedica.svg"
+    },
+]
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+export default async function Home() {
+    const { posts, carousel, clients } = await client.fetch(
+        `
+            {
+                "posts": *[_type == 'post'],
+                "carousel": *[_type == 'carousel'],
+                "clients": *[_type == 'clients']
+            }
+        `
+    )
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+    return (
+        <>
+            <Carousel slides={carousel} />
+            <section className="industrias">
+                <h2 className="section-title">Industrias en las que nos especializamos</h2>
+                <div className="card-wrapper">
+                    { industrias.map(({ name, icon }) => (
+                        <Card
+                            key={name}
+                            title={name}
+                            icon={icon}
+                        />
+                    )) }
+                </div>
+            </section>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
+            <LogoCarousel clients={clients} />
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+            <section className="posts">
+                <h2 className="section-title">Nuestra experiencia</h2>
+                <div className="posts-wrapper">
+                    { posts?.map(({ _id, image, title }) => (
+                        <PostCard
+                            key={_id}
+                            id={_id}
+                            image={image}
+                            title={title}
+                        />
+                    )) }
+                </div>
+            </section>
+
+            <section className="contactanos">
+                <div className="contactanos-wrapper">
+                    <h3>Contactanos</h3>
+                    <div className="links">
+                        <Link href="#">Futuros clientes</Link>
+                        <Link href="#">Futuros colaboradores</Link>
+                    </div>
+                </div>
+            </section>
+        </>
+    )
 }
