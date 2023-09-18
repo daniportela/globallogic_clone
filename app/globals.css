@@ -515,8 +515,8 @@ footer a {
 /******** Media queries ********/
 @media (width < 1080px) {
   /* Header */
-  header img {
-    width: 15%;
+  header a img {
+    width: 50%;
   }
 
   nav ul {
@@ -659,6 +659,10 @@ footer a {
 
 @media (width < 450px) {
   /* Main Carousel */
+  .carousel {
+    height: 100dvh
+  }
+  
   .slide-content {
     width: 100%;
     bottom: 0;
